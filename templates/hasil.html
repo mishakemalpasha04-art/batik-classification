@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Hasil Klasifikasi Batik</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white font-sans h-screen overflow-hidden">
+
+  <header class="bg-yellow-200 px-6 py-4 shadow">
+    <h1 class="text-yellow-900 text-2xl font-bold">KLASIFIKASI JENIS BATIK</h1>
+  </header>
+
+  <main class="flex h-[calc(100vh-72px)] items-center justify-center px-10">
+    <div class="flex flex-col md:flex-row items-center gap-12">
+      <div class="w-[320px] h-[240px] bg-gray-200 rounded shadow overflow-hidden">
+        <img src="{{ url_for('static', filename=preview_path) }}"
+             alt="Preview Gambar Batik" class="w-full h-full object-cover" />
+      </div>
+
+      <div class="max-w-lg text-left">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">Hasil Klasifikasi</h2>
+        <p class="text-gray-700 text-xl">
+          <span class="font-semibold">Jenis Batik:</span> {{ prediction|title }}
+        </p>
+        <p class="text-gray-700 mt-4">
+          <span class="font-semibold">Deskripsi:</span> {{ description }}
+        </p>          
+        <a href="/" class="mt-8 inline-block bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-6 rounded-md transition">
+          Klasifikasi Ulang
+        </a>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Pilih Gambar - Klasifikasi Jenis Batik</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: url("{{ url_for('static', filename='bg_predict_batik.jpg') }}");
+      background-size: cover;
+      background-position: center 20%;
+      background-repeat: no-repeat;
+    }
+  </style>
+</head>
+<body class="h-screen font-sans flex flex-col">
+
+  <header class="bg-yellow-200 px-6 py-4">
+    <h1 class="text-yellow-900 text-2xl font-bold">KLASIFIKASI JENIS BATIK</h1>
+  </header>
+
+  <main class="flex-grow flex flex-col items-center justify-center gap-6">
+    <div id="loading" class="hidden flex flex-col items-center justify-center text-black">
+      <svg class="animate-spin h-8 w-8 text-black mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <span class="text-sm">Sedang memproses gambar batik...</span>
+    </div>      
+
+    <form id="uploadForm" action="/predict" method="POST" enctype="multipart/form-data" class="flex flex-col items-center gap-4">
+      <input id="fileInput" name="file" type="file" accept="image/*" class="hidden">
+
+      <button type="button" id="btnWebcam"
+              class="bg-white text-black font-semibold px-8 py-2 rounded shadow hover:bg-gray-100 transition">
+        Gunakan Kamera
+      </button>
+
+      <span class="text-white font-medium">Atau</span>
+
+      <button type="button" id="btnFile"
+              class="bg-white text-black font-semibold px-8 py-2 rounded shadow hover:bg-gray-100 transition">
+        Pilih dari Galeri
+      </button>
+
+      <video id="video" class="w-64 h-48 rounded-lg shadow hidden" autoplay></video>
+      <button type="button" id="snapBtn" class="bg-yellow-600 text-white px-6 py-2 rounded hidden">Kirim Gambar</button>
+      <canvas id="canvas" class="hidden"></canvas>
+    </form>
+  </main>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const btnWebcam = document.getElementById("btnWebcam");
+    const btnFile = document.getElementById("btnFile");
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const snapBtn = document.getElementById("snapBtn");
+
+    btnFile.onclick = () => fileInput.click();
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length > 0) {
+        document.getElementById("loading").classList.remove("hidden");
+        const form = document.getElementById("uploadForm");
+        const formData = new FormData(form);
+
+        fetch('/predict', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.text())
+        .then(html => {
+          document.open();
+          document.write(html);
+          document.close();
+        })
+        .catch(err => alert("Gagal mengirim gambar: " + err));
+      } else {
+        alert("Tidak ada file dipilih.");
+      }
+    });
+
+    btnWebcam.onclick = () => {
+      video.classList.remove("hidden");
+      snapBtn.classList.remove("hidden");
+
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => video.srcObject = stream)
+        .catch(err => alert("Gagal membuka kamera: " + err));
+    };
+
+    snapBtn.onclick = () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+
+      canvas.toBlob(blob => {
+        const file = new File([blob], "snapshot.jpg", { type: "image/jpeg" });
+        const formData = new FormData();
+        formData.append('file', file);
+
+        document.getElementById("loading").classList.remove("hidden");
+
+        fetch('/predict', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.text())
+        .then(html => {
+          document.open();
+          document.write(html);
+          document.close();
+        })
+        .catch(err => alert("Gagal mengirim gambar: " + err));
+      }, 'image/jpeg', 0.95);
+    };
+  </script>
+
+  {% if last_error %}
+  <script>
+    window.onload = function () {
+      alert("{{ last_error }}");
+    };
+  </script>
+  {% endif %}
+
+</body>
+</html>

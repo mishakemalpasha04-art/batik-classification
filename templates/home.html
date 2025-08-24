@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Klasifikasi Batik - Identifikasi Jenis Motif</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-yellow-50 font-sans h-screen overflow-hidden">
+
+  <header class="bg-yellow-200 px-6 py-4">
+    <h1 class="text-yellow-900 text-2xl font-bold">KLASIFIKASI JENIS BATIK</h1>
+  </header>
+
+  <div class="flex h-[calc(100vh-72px)] items-center justify-center px-6">
+    <div class="flex flex-col md:flex-row items-center justify-center gap-32">
+      <div class="max-w-xl text-center md:text-left">
+        <h2 class="text-4xl font-extrabold text-gray-900 mb-4 leading-tight">
+          IDENTIFIKASI MOTIF BATIK OTOMATIS
+        </h2>
+        <p class="text-gray-700 text-base leading-relaxed mb-6">
+          Sistem ini menggunakan metode <strong>K-Nearest Neighbors (KNN)</strong> untuk 
+          <em>mengklasifikasikan jenis motif batik</em> berdasarkan citra yang diunggah. 
+          Pola, warna, dan detail motif diekstraksi menggunakan <strong>EfficientNet</strong>, 
+          lalu diklasifikasikan secara otomatis ke dalam kategori batik tradisional Indonesia.
+        </p>          
+        <a href="/predict" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-md transition inline-block">
+          Mulai Klasifikasi
+        </a>
+      </div>
+
+      <div class="w-80 h-[30rem] mt-8 md:mt-0 flex items-center justify-center">
+        <img src="{{ url_for('static', filename='batik.jpg') }}"
+             alt="Gambar Motif Batik"
+             class="w-full h-full object-contain drop-shadow-xl" />
+      </div>
+      
+    </div>
+  </div>
+
+</body>
+</html>
