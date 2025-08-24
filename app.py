@@ -114,5 +114,6 @@ def predict_result():
         last_error = f"Terjadi kesalahan: {str(e)}"
         return redirect(url_for('predict_page'))
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))  # Railway kasih PORT otomatis
+    app.run(host="0.0.0.0", port=port)
